@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <cuda.h>
-#include <cuda_runtime.h>
 
 #define PerThread 1024
 #define N 64*256*PerThread//积分计算PI总共划分为这么多项相加

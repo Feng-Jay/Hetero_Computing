@@ -10,11 +10,13 @@
 __global__ void Gpu_calPI(double* Gpu_list)
 {
     int tid=blockIdx.x*blockDim.x*blockDim.y+threadIdx.x;
-    int begin=tid*PerThread;
-    int end=begin+PerThread-1;
+    int begin=tid*PerThread+1;
+    int end=begin+PerThread;
     double temp=0;
+    int flag=1;
     for(int i=begin;i<end;i++){
-        temp+=4.0/(1+((i+0.5)/(N))*((i+0.5)/(N)));
+        temp+=flag*(1.0/(2*i-1));
+        flag=flag*(-1);
     }
     Gpu_list[tid]=temp;
 }
@@ -35,7 +37,7 @@ int main(void)
     for(int i=0;i<BlockNum*ThreadNum;i++){
         outcome+=cpu_list[i];
     }
-    outcome=outcome/(N);
+    outcome=4*outcome;
     printf("outcome=%.10f\n",outcome);
     // printf("block x=%d,y=%d\n",blocksize.x,blocksize.y);
     // printf("grid x=%d,y=%d\n",gridsize.x,gridsize.y);

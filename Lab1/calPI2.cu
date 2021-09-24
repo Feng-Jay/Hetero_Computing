@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define PerThread 1024
+#define PerThread 1024//每个线程计算多少个i
 #define N 64*256*PerThread//积分计算PI总共划分为这么多项相加
 #define BlockNum 64 //block的数量
 #define ThreadNum 256 //每个block中threads的数量

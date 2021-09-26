@@ -17,12 +17,12 @@ __global__ void Gpu_calPI(double* Gpu_list)
         temp+=4.0/(1+((i+0.5)/(N))*((i+0.5)/(N)));
     }
     cache[cacheIdx]=temp;
-    __syncthreads();
+    __syncthreads();//同步
 
     int i=blockDim.x/2;
     while(i!=0){
         if(cacheIdx<i) cache[cacheIdx]+=cache[cacheIdx+i];
-        __syncthreads();
+        __syncthreads();//同步
         i=i/2;
     }
 

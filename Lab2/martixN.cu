@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define N 1//矩阵的N次方
+#define N 2//矩阵的N次方
 #define BlockNum 64 //block的数量
 #define ThreadNum 64 //每个block中threads的数量
 #define m 64*64//每个行有多少个元素，即矩阵的维度

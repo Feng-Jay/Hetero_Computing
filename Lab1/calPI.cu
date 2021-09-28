@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include<time.h>
 
-#define PerThread 1024//每个线程计算多少个i
+#define PerThread 2048*2//每个线程计算多少个i
 #define N 64*256*PerThread//积分计算PI总共划分为这么多项相加
 #define BlockNum 64 //block的数量
 #define ThreadNum 256 //每个block中threads的数量
@@ -36,7 +36,7 @@ int main(void)
     }
     outcome=outcome/(N);
     double end=clock();
-    printf("outcome=%.10f, time =%.10f\n",outcome,(end-begin)/(CLOCKS_PER_SEC));
+    printf("Cu1: N=%d, outcome=%.10f, time =%.10f\n",N,outcome,(end-begin)/(CLOCKS_PER_SEC));
     // printf("block x=%d,y=%d\n",blocksize.x,blocksize.y);
     // printf("grid x=%d,y=%d\n",gridsize.x,gridsize.y);
     

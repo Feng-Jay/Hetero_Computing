@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <time.h>
 
-#define PerThread 1024//每个线程计算多少个i
+#define PerThread 2048*2//每个线程计算多少个i
 #define N 64*256*PerThread//积分计算PI总共划分为这么多项相加
 #define BlockNum 64 //block的数量
 #define ThreadNum 256 //每个block中threads的数量
@@ -42,7 +43,8 @@ int main(void)
     cudaMalloc((void**)&Gpu_list,sizeof(double)*BlockNum);
     // dim3 blocksize=dim3(1,ThreadNum);
     // dim3 gridsize=dim3(1,BlockNum);
-    printf("go to GPU\n");
+    // printf("go to GPU\n");
+    double begin=clock();
     Gpu_calPI<<<BlockNum,ThreadNum>>>(Gpu_list);
 
     cudaMemcpy(cpu_list,Gpu_list,sizeof(double)*BlockNum,cudaMemcpyDeviceToHost);
@@ -50,7 +52,8 @@ int main(void)
         outcome+=cpu_list[i];
     }
     outcome=4*outcome;
-    printf("outcome=%.10f\n",outcome);
+    double end=clock();
+    printf("Scu2: N=%d,outcome=%.10f,time spend %.10f\n",N,outcome,(end-begin)/(CLOCKS_PER_SEC));
     // printf("block x=%d,y=%d\n",blocksize.x,blocksize.y);
     // printf("grid x=%d,y=%d\n",gridsize.x,gridsize.y);
     

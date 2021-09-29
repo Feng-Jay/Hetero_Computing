@@ -4,7 +4,7 @@
 #include <iomanip>
 using namespace std;
 
-const int N=64*256*1024*4;
+const int N=64*256*1024;
 
 int main()
 {

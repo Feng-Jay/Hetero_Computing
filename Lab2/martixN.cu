@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <time.h>
 
-#define N 2//矩阵的N次方
-#define BlockNum 64 //block的数量
+#define N 64//矩阵的N次方
+#define BlockNum 8//block的数量
 #define ThreadNum 64 //每个block中threads的数量
-#define m 64*64//每个行有多少个元素，即矩阵的维度
+#define m 512//每个行有多少个元素，即矩阵的维度
 
 __global__ void Gpu_martixN(double* Gpu_martix, double* Gpu_res)
 {
@@ -49,7 +49,5 @@ int main()
     cudaMemcpy(Cpu_res,Gpu_res,sizeof(double)*m*m,cudaMemcpyDeviceToHost);
     printf("spend %.10f s\n",(end-begin)/(CLOCKS_PER_SEC));
     printf("here is outcome martix......................\n");
-    for(int i=0;i<m;i++)
-        printf("%f ",Cpu_res[i]);
-        printf("\n");
+    printf("%f\n",Cpu_res[0]);
 }

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const int m=512;
+const int m=32;
 const int N=64;
 
 int main()

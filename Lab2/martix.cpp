@@ -6,14 +6,14 @@
 using namespace std;
 
 const int m=32;
-const int N=64;
+const int N=4096;
 
 int main()
 {
     double martix[m][m];
     double temp[m][m];
     double temp2[m][m];
-    cout<<"elem value is "<<1.0/m<<endl;
+    // cout<<"elem value is "<<1.0/m<<endl;
     //init martix
     for(int i=0;i<m;i++){
         for(int j=0;j<m;j++) {martix[i][j]=1.0/(m);temp[i][j]=1.0/(m);temp2[i][j]=0;}
@@ -33,6 +33,6 @@ int main()
     memcpy(martix,temp,sizeof(double)*m*m);
     double end=clock();
     cout<<"Linear's timespend is "<<fixed<<setprecision(10)<<(end-begin)/CLOCKS_PER_SEC<<endl;
-    cout<<"After exp N, martix's value = "<<martix[0][0]<<endl;
+    // cout<<"After exp N, martix's value = "<<martix[0][0]<<endl;
     return 0;
 }

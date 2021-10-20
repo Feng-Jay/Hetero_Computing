@@ -11,16 +11,22 @@ __global__ void Gpu_FastExp(float *gpu_martix,float* gpu_res)
 {
     // printf("%d ", threadIdx.y)
     __shared__ float temp[gpu_m*gpu_m];
+    float res[gpu_m];
     int tid=threadIdx.y;
     temp[tid]=gpu_martix[tid];
     __syncthreads();
     for(int i=1;i<gpu_exp;i*=2){
-        float res=0.0;
-        for(int j=0;j<M;j++){
-            res+=temp[(tid/M)*M+j]*temp[j*M+(tid%M)];
+        for(int k=0;k<M;k++)
+        {
+            res[k]=0;
+            for(int j=0;j<M;j++){
+                res[k]+=temp[tid*M+j]*temp[j*M+tid];
+            }
         }
-        gpu_res[tid]=res;
-        temp[tid]=res;
+        for(int i=0;i<M;i++){
+        gpu_res[tid*M+i]=res[i];
+        temp[tid*M+i]=res[i];
+        }
         __syncthreads();
     }
 }
@@ -43,7 +49,7 @@ int main()
     printf("init elem=%f",1.0/M);
     cudaMemcpy(gpu_martix,cpu_martix,M*M*sizeof(float),cudaMemcpyHostToDevice);
     float begin=clock();
-    dim3 threads(1,M*M);
+    dim3 threads(1,M);
     // printf("一切正常\n");
     Gpu_FastExp<<<1,threads>>>(gpu_martix,gpu_res);
     cudaDeviceSynchronize();

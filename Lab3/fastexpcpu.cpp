@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     cl_device_id device;
-    err=clGetDeviceIDs(platfrom,CL_DEVICE_TYPE_GPU,1,&device,nullptr);
+    err=clGetDeviceIDs(platfrom,CL_DEVICE_TYPE_CPU,1,&device,nullptr);
     if(err!=CL_SUCCESS){
         std::cout<<"Can't select a device"<<std::endl;
         return -1;
@@ -52,19 +52,19 @@ int main(int argc, char* argv[])
         return -1;
     }
     const char* program_source =
-    "__kernel void test_main(__global double* A, __global const double* B, __global double* C, const int num, const int exp) {\n"
+    "__kernel void test_main(__global double* A, __global const double* B, __global double* C, int num, int exp) {\n"
     "  size_t idx = get_global_id(0);\n"
-    "double temp[10];\n"
-    "for(int i=0;i<num;i++) temp[i]=0;\n"
-    
-    "for(int count=1;count<exp;count*=2){\n"
-        "for(int i=0;i<num;i++){\n"
-            "for(int j=0;j<num;j++){\n"
-                "temp[i]+=A[(idx/num)*num+j]*A[j*num+i];\n"
-            "}//算完1个\n"
-        "}//算完1行\n"
-        "for(int i=0;i<num;i++) {A[(idx/num)*num+i]=temp[i];temp[i]=0;}\n"
-    "}\n"
+    "  __local double localbuffer[num*num];\n"
+    "  localbuffer[idx]=A[idx];\n"
+    "  barrier(CLK_LOCAL_MEM_FENCE);\n"
+    "  double temp=0;\n"
+    "  for(int i=1;i<exp;i*=2){\n"
+            "temp=0;\n"
+            "for(int j=0;j<num;j++) temp+=localbuffer[(idx/num)*num+j]*localbuffer[j*num+(idx%num)];\n" 
+            "localbuffer[idx]=temp;\n"  
+            "C[idx]=temp;\n" 
+            "barrier(CLK_LOCAL_MEM_FENCE);\n"
+        "}\n"
     "}";
     cl_program program = clCreateProgramWithSource(context, 1, &program_source, nullptr, nullptr);
     if(program==nullptr){
@@ -108,14 +108,14 @@ int main(int argc, char* argv[])
         return -1;
     }
     double end=clock();
-    err = clEnqueueReadBuffer(queue, mA, CL_TRUE, 0, sizeof(double) * num*num, hA, 0, nullptr, nullptr);
+    err = clEnqueueReadBuffer(queue, mC, CL_TRUE, 0, sizeof(double) * num*num, hC, 0, nullptr, nullptr);
     if (err != CL_SUCCESS) {
         std::cout << "Read data failed" << std::endl;
         return -1;
     }
     cout<<"After exp\n";
     for(int i=0;i<10;i++){
-        for(int j=0;j<10;j++) std:: cout<<hA[i*10+j]<<" ";
+        for(int j=0;j<10;j++) std:: cout<<hC[i*10+j]<<" ";
         std:: cout<< std:: endl;
     }
     printf("Time spend= %.10f\n", (end-begin)/CLOCKS_PER_SEC);

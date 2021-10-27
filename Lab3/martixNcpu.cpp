@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     cl_device_id device;
-    err=clGetDeviceIDs(platfrom,CL_DEVICE_TYPE_GPU,1,&device,nullptr);
+    err=clGetDeviceIDs(platfrom,CL_DEVICE_TYPE_CPU,1,&device,nullptr);
     if(err!=CL_SUCCESS){
         std::cout<<"Can't select a device"<<std::endl;
         return -1;
